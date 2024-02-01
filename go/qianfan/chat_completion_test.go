@@ -18,11 +18,11 @@ func TestChatCompletion(t *testing.T) {
 		chat := NewChatCompletion(WithModel(model))
 		resp, err := chat.Do(
 			context.Background(),
-			ChatCompletionRequest{
+			&ChatCompletionRequest{
 				Messages: []ChatCompletionMessage{
 					ChatCompletionUserMessage("你好"),
 				},
-			}.WithExtra(map[string]interface{}{}),
+			},
 		)
 		assert.NoError(t, err)
 		assert.Equal(t, resp.RawResponse.StatusCode, 200)
@@ -42,7 +42,7 @@ func TestChatCompletionStream(t *testing.T) {
 		chat := NewChatCompletion(WithModel(model))
 		resp, err := chat.Stream(
 			context.Background(),
-			ChatCompletionRequest{
+			&ChatCompletionRequest{
 				Messages: []ChatCompletionMessage{
 					ChatCompletionUserMessage("你好"),
 				},
@@ -51,18 +51,18 @@ func TestChatCompletionStream(t *testing.T) {
 		assert.NoError(t, err)
 		turn_count := 0
 		for {
-			resp, err := resp.Recv()
+			r, err := resp.Recv()
 			assert.NoError(t, err)
 			if resp.IsEnd {
 				break
 			}
 			turn_count++
-			assert.Equal(t, resp.RawResponse.StatusCode, 200)
-			assert.NotEqual(t, resp.Id, nil)
-			assert.Equal(t, resp.Object, "chat.completion")
-			assert.Contains(t, resp.RawResponse.Request.URL.Path, endpoint)
-			assert.Contains(t, resp.Result, "你好")
-			req, err := getRequestBody[ChatCompletionRequest](resp.RawResponse)
+			assert.Equal(t, r.RawResponse.StatusCode, 200)
+			assert.NotEqual(t, r.Id, nil)
+			assert.Equal(t, r.Object, "chat.completion")
+			assert.Contains(t, r.RawResponse.Request.URL.Path, endpoint)
+			assert.Contains(t, r.Result, "你好")
+			req, err := getRequestBody[ChatCompletionRequest](r.RawResponse)
 			assert.NoError(t, err)
 			assert.Equal(t, req.Messages[0].Content, "你好")
 		}
