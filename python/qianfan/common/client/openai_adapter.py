@@ -113,8 +113,7 @@ def entry(host: str, port: int, detach: bool, log_file: Optional[str]) -> None:
 
     if detach:
         import os
-
-        from multiprocess import Process
+        from multiprocessing import Process
 
         # close stderr output
         logger._logger.removeHandler(logger.handler)
