@@ -62,6 +62,11 @@ jobs:
         run: |
           sudo systemsetup -setusingnetworktime off
           sudo rm -rf /etc/ntp.conf
+      - name: test
+        run: qianfan openai -d
+        env:
+          QIANFAN_ACCESS_KEY: fake
+          QIANFAN_SECRET_KEY: fake
       - name: Run tests
         run: make test
       - name: Build artifacts
